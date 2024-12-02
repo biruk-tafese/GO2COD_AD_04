@@ -36,30 +36,29 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Animated Text
-            AnimatedTextKit(
-              animatedTexts: [
-                TypewriterAnimatedText(
-                  'Welcome to GO2COD Unit Converter!',
-                  textStyle: const TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: AnimatedTextKit(
+                animatedTexts: [
+                  TypewriterAnimatedText(
+                    'Welcome to GO2COD Unit Converter!',
+                    textAlign: TextAlign.center,
+                    textStyle: const TextStyle(
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    speed: const Duration(
+                        milliseconds: 50), // Speed of typing effect
                   ),
-                  speed: const Duration(
-                      milliseconds: 100), // Speed of typing effect
-                ),
-              ],
-              totalRepeatCount: 1, // Text appears once
-              onFinished: () {
-                // You can add any logic here after animation completes
-              },
+                ],
+                totalRepeatCount: 1, // Text appears once
+                onFinished: () {
+                  // You can add any logic here after animation completes
+                },
+              ),
             ),
             const SizedBox(height: 20),
-
-            // Loading indicator
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
           ],
         ),
       ),

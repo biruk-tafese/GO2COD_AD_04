@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double value = 1; // Default input value
   String result = ''; // Conversion result
 
+  // Get the available units based on the selected category
   List<String> getAvailableUnits() {
     switch (selectedCategory) {
       case 'Length':
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Initialize default units
   @override
   void initState() {
     super.initState();
@@ -36,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     toUnit = getAvailableUnits().last;
   }
 
+  // Perform the conversion
   void convert() {
     try {
       double convertedValue =
@@ -66,164 +69,174 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Category Selection
-              Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Select a Category',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        isExpanded: true,
-                        onChanged: (newCategory) {
-                          setState(() {
-                            selectedCategory = newCategory!;
-                            fromUnit = getAvailableUnits().first;
-                            toUnit = getAvailableUnits().last;
-                          });
-                        },
-                        items: ['Length', 'Weight', 'Temperature']
-                            .map((category) => DropdownMenuItem(
-                                  value: category,
-                                  child: Text(category),
-                                ))
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildCategorySelection(),
 
-              // From Unit Selection
-              Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'From Unit',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: fromUnit,
-                        isExpanded: true,
-                        onChanged: (newUnit) {
-                          setState(() {
-                            fromUnit = newUnit!;
-                          });
-                        },
-                        items: availableUnits
-                            .map((unit) => DropdownMenuItem(
-                                  value: unit,
-                                  child: Text(unit),
-                                ))
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // To Unit Selection
-              Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'To Unit',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: toUnit,
-                        isExpanded: true,
-                        onChanged: (newUnit) {
-                          setState(() {
-                            toUnit = newUnit!;
-                          });
-                        },
-                        items: availableUnits
-                            .map((unit) => DropdownMenuItem(
-                                  value: unit,
-                                  child: Text(unit),
-                                ))
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // From and To Unit Selection
+              _buildUnitSelection(availableUnits),
 
               // Input Value Field
-              Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Enter Value',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter the value to convert',
-                        ),
-                        onChanged: (input) {
-                          setState(() {
-                            value = double.tryParse(input) ?? 0.0;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Convert Button
-              ElevatedButton(
-                onPressed: convert,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  backgroundColor: Colors.blueAccent,
-                  textStyle: const TextStyle(fontSize: 16),
-                ),
-                child: const Text('Convert'),
-              ),
+              _buildInputValueField(),
 
               // Result Display
               const SizedBox(height: 16),
               ConversionResult(result: result),
+              // Result Display
+              const SizedBox(height: 16),
+
+              // Convert Button
+              _buildConvertButton(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Category Selection Widget
+  Widget _buildCategorySelection() {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Select a Category',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            DropdownButton<String>(
+              value: selectedCategory,
+              isExpanded: true,
+              onChanged: (newCategory) {
+                setState(() {
+                  selectedCategory = newCategory!;
+                  fromUnit = getAvailableUnits().first;
+                  toUnit = getAvailableUnits().last;
+                });
+              },
+              items: ['Length', 'Weight', 'Temperature']
+                  .map((category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // From and To Unit Selection Widget
+  Widget _buildUnitSelection(List<String> availableUnits) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildUnitDropdown('From Unit', fromUnit, (newUnit) {
+            setState(() {
+              fromUnit = newUnit!;
+            });
+          }, availableUnits),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildUnitDropdown('To Unit', toUnit, (newUnit) {
+            setState(() {
+              toUnit = newUnit!;
+            });
+          }, availableUnits),
+        ),
+      ],
+    );
+  }
+
+  // Unit Dropdown Widget
+  Widget _buildUnitDropdown(String label, String value,
+      ValueChanged<String?> onChanged, List<String> availableUnits) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            DropdownButton<String>(
+              value: value,
+              isExpanded: true,
+              onChanged: onChanged,
+              items: availableUnits
+                  .map((unit) => DropdownMenuItem(
+                        value: unit,
+                        child: Text(unit),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Input Value Field Widget
+  Widget _buildInputValueField() {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Enter Value',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TextField(
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Color.fromARGB(255, 116, 112, 112)),
+              decoration: const InputDecoration(
+                hintText: 'Enter the value to convert',
+              ),
+              onChanged: (input) {
+                setState(() {
+                  value = double.tryParse(input) ?? 0.0;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Convert Button Widget
+  Widget _buildConvertButton() {
+    return ElevatedButton(
+      onPressed: convert,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        backgroundColor: Colors.blueAccent,
+        textStyle: const TextStyle(fontSize: 16),
+      ),
+      child: const Text(
+        'Convert',
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
